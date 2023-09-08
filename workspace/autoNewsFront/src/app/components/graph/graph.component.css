@@ -9,18 +9,15 @@
 
 h1 {
     animation: zoomInOut 5s infinite alternate;
-    /* Configuramos la animación */
 }
 
 @keyframes zoomInOut {
     0% {
         transform: scale(1);
-        /* Tamaño normal */
     }
 
     100% {
         transform: scale(1.1);
-        /* Tamaño aumentado */
     }
 }
 
