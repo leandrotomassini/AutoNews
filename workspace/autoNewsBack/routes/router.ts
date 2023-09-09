@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
-import puppeteer from "puppeteer";
-import fs from "fs/promises";
+import puppeteer from 'puppeteer';
+import fs from 'fs/promises';
 
 import Server from '../classes/server';
 
@@ -9,99 +9,107 @@ import { usuariosConectados } from '../sockets/socket';
 const router = Router();
 
 router.get('/tn', async (req: Request, resp: Response) => {
-    const browser = await puppeteer.launch({
-        headless: false,
-        executablePath:
-            "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe",
-    });
-
-    const page = await browser.newPage();
-
-    await page.goto("https://tn.com.ar/ultimas-noticias/pagina/1/");
-
-    const linksNoticias = await page.evaluate(() => {
-        const noticiasTarjetas = document.querySelectorAll('.card__container');
-
-        const listadoNoticias = Array.from(noticiasTarjetas).map((tarjetaNoticia) => {
-            const enlace = tarjetaNoticia.querySelector('a.card__image.card__media');
-            const href = enlace ? enlace.getAttribute('href') : null;
-
-            return {
-                linkNoticia: 'https://tn.com.ar' + href,
-            };
-        });
-
-        return listadoNoticias;
-    });
-
-    await browser.close();
-
-    // Leer el archivo existente de noticias
-    let noticiasExistentes = [];
     try {
-        const data = await fs.readFile("data/linksNoticias.json", "utf-8");
-        noticiasExistentes = JSON.parse(data);
-    } catch (error) {
-        // El archivo no existe o no se puede leer
-    }
-
-    // Comparar y agregar noticias nuevas
-    const nuevasNoticias = [];
-    let id = noticiasExistentes.length + 1;
-    for (const nuevaNoticia of linksNoticias) {
-        if (!noticiasExistentes.some((existente: any) => existente.linkNoticia === nuevaNoticia.linkNoticia)) {
-            nuevasNoticias.push({ id, ...nuevaNoticia });
-            id++;
-        }
-    }
-
-    // Actualizar el archivo con las nuevas noticias
-    const noticiasActualizadas = [...noticiasExistentes, ...nuevasNoticias];
-    await fs.writeFile("data/linksNoticias.json", JSON.stringify(noticiasActualizadas));
-
-    console.log('accediendo a títulos');
-
-    // Acceder a los títulos de las nuevas noticias
-    for (const nuevaNoticia of nuevasNoticias) {
-        const browser2 = await puppeteer.launch({
+        const browser = await puppeteer.launch({
             headless: false,
-            executablePath: "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe",
-        });
-        const page2 = await browser2.newPage();
-
-        await page2.goto(nuevaNoticia.linkNoticia);
-
-        // Esperar a que aparezca el título
-        await page2.waitForSelector('h1');
-
-        const textoNoticia = await page2.evaluate(() => {
-            const h1 = document.querySelector('h1')!.innerHTML;
-            const h2 = document.querySelector('h2')!.innerHTML;
-            const portada = document.querySelector('.content-image')?.src;
-            const fotos = document.querySelectorAll('img.content-image');
-            const parrafos = document.querySelectorAll('.paragraph');
-
-            return `${h1} - ${h2}`;
+            executablePath: 'C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe',
         });
 
-        console.log(`Título de la noticia: ${textoNoticia}`);
+        const page = await browser.newPage();
 
-        await browser2.close();
+        await page.goto('https://tn.com.ar/ultimas-noticias/pagina/1/');
+
+        const linksNoticias = await page.evaluate(() => {
+            const noticiasTarjetas = document.querySelectorAll('.card__container');
+
+            const listadoNoticias = Array.from(noticiasTarjetas).map((tarjetaNoticia) => {
+                const enlace = tarjetaNoticia.querySelector('a.card__image.card__media');
+                const href = enlace ? enlace.getAttribute('href') : null;
+
+                return {
+                    linkNoticia: 'https://tn.com.ar' + href,
+                };
+            });
+
+            return listadoNoticias;
+        });
+
+        await browser.close();
+
+        // Leer el archivo existente de noticias
+        let noticiasExistentes = [];
+        try {
+            const data = await fs.readFile('data/linksNoticias.json', 'utf-8');
+            noticiasExistentes = JSON.parse(data);
+        } catch (error) {
+            // El archivo no existe o no se puede leer
+        }
+
+        // Comparar y agregar noticias nuevas
+        const nuevasNoticias = [];
+        let id = noticiasExistentes.length + 1;
+        for (const nuevaNoticia of linksNoticias) {
+            if (nuevaNoticia.linkNoticia && nuevaNoticia.linkNoticia !== "https://tn.com.arnull" && !noticiasExistentes.some((existente: any) => existente.linkNoticia === nuevaNoticia.linkNoticia)) {
+                nuevasNoticias.push({ id, ...nuevaNoticia });
+                id++;
+            }
+        }
+
+        // Actualizar el archivo con las nuevas noticias
+        const noticiasActualizadas = [...noticiasExistentes, ...nuevasNoticias];
+        await fs.writeFile('data/linksNoticias.json', JSON.stringify(noticiasActualizadas));
+
+        // Acceder a los títulos de las nuevas noticias y guardarlos en textonoticias.json
+        const textonoticias = [];
+        let i = 0;
+
+        if (nuevasNoticias.length > 0) {
+            console.log('accediendo a títulos');
+            for (const nuevaNoticia of nuevasNoticias) {
+                i++;
+
+                try {
+                    const browser2 = await puppeteer.launch({
+                        headless: false,
+                        executablePath: 'C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe',
+                    });
+                    const page2 = await browser2.newPage();
+
+                    await page2.goto(nuevaNoticia.linkNoticia);
+
+                    // Esperar a que aparezca el título
+                    await page2.waitForSelector('h1');
+
+                    const datosNoticia = await page2.evaluate(() => {
+                        const h1 = document.querySelector('h1')!.innerHTML;
+                        const h2 = document.querySelector('h2')!.innerHTML;
+                        const portada = document.querySelector('.content-image')?.getAttribute('src');
+                        const fotos = Array.from(document.querySelectorAll('img.content-image')).map((imagen) => imagen.getAttribute('src'));
+                        const parrafos = Array.from(document.querySelectorAll('.paragraph')).map((parrafo) => parrafo.textContent);
+
+                        return { h1, h2, portada, fotos, parrafos };
+                    });
+
+                    console.log('Cargando: ' + i + '-' + datosNoticia.h1);
+
+                    textonoticias.push({ id: i, idLinkNoticia: nuevaNoticia.id, ...datosNoticia });
+                    console.log('Insertada en el arreglo correctamente.');
+                    await browser2.close();
+                } catch (error) {
+                    console.error(`Error al procesar noticia: ${error}`);
+                }
+            }
+        }
+
+        // Guardar el archivo textonoticias.json
+        await fs.writeFile('data/textonoticias.json', JSON.stringify(textonoticias));
+
+        resp.json(nuevasNoticias);
+    } catch (error) {
+        console.error(`Error general: ${error}`);
+        resp.status(500).json({ error: 'Error en el servidor' });
     }
-
-    resp.json(nuevasNoticias);
 });
-
-
-
-
-
-
-
-
-
-
-
 router.get('/mensajes', (req: Request, resp: Response) => {
 
     resp.status(200).json({
@@ -184,10 +192,3 @@ router.get('/usuarios/detalle', (req: Request, resp: Response) => {
 });
 
 export default router;
-
-
-// document.querySelector('h1').innerHTML
-// document.querySelector('h2').innerHTML
-// document.querySelector('.content-image')?.src
-// const enlacesImagenes = document.querySelectorAll('img.content-image');
-// document.querySelectorAll('.paragraph')
