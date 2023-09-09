@@ -39,15 +39,18 @@ router.get('/tn', async (req: Request, resp: Response) => {
         // Leer el archivo existente de noticias
         let noticiasExistentes = [];
         try {
-            const data = await fs.readFile('data/linksNoticias.json', 'utf-8');
+            const data = await fs.readFile('data/noticias.json', 'utf-8');
             noticiasExistentes = JSON.parse(data);
         } catch (error) {
             // El archivo no existe o no se puede leer
         }
 
-        // Comparar y agregar noticias nuevas
+        // Obtener el último ID existente
+        const ultimoIdExistente = noticiasExistentes.length > 0 ? noticiasExistentes[noticiasExistentes.length - 1].id : 0;
+
+        // Comparar y agregar noticias nuevas con IDs incrementados
         const nuevasNoticias = [];
-        let id = noticiasExistentes.length + 1;
+        let id = ultimoIdExistente + 1;
         for (const nuevaNoticia of linksNoticias) {
             if (nuevaNoticia.linkNoticia && nuevaNoticia.linkNoticia !== "https://tn.com.arnull" && !noticiasExistentes.some((existente: any) => existente.linkNoticia === nuevaNoticia.linkNoticia)) {
                 nuevasNoticias.push({ id, ...nuevaNoticia });
@@ -57,9 +60,9 @@ router.get('/tn', async (req: Request, resp: Response) => {
 
         // Actualizar el archivo con las nuevas noticias
         const noticiasActualizadas = [...noticiasExistentes, ...nuevasNoticias];
-        await fs.writeFile('data/linksNoticias.json', JSON.stringify(noticiasActualizadas));
+        await fs.writeFile('data/noticias.json', JSON.stringify(noticiasActualizadas));
 
-        // Acceder a los títulos de las nuevas noticias y guardarlos en textonoticias.json
+        // Acceder a los títulos de las nuevas noticias y guardarlos en el archivo noticias.json
         const textonoticias = [];
         let i = 0;
 
@@ -101,15 +104,25 @@ router.get('/tn', async (req: Request, resp: Response) => {
             }
         }
 
-        // Guardar el archivo textonoticias.json
-        await fs.writeFile('data/textonoticias.json', JSON.stringify(textonoticias));
+        // Actualizar el archivo noticias.json con los títulos de las noticias
+        const noticiasConTitulos = noticiasActualizadas.map((noticia: any) => {
+            const tituloData = textonoticias.find((titulo: any) => titulo.idLinkNoticia === noticia.id);
+            return { ...noticia, ...tituloData };
+        });
 
-        resp.json(nuevasNoticias);
+        await fs.writeFile('data/noticias.json', JSON.stringify(noticiasConTitulos));
+
+        // Obtener las últimas 20 noticias del archivo (o menos si hay menos de 20)
+        const noticiasMasRecientes = noticiasConTitulos.slice(-20);
+
+        resp.json(noticiasMasRecientes);
     } catch (error) {
         console.error(`Error general: ${error}`);
         resp.status(500).json({ error: 'Error en el servidor' });
     }
 });
+
+
 router.get('/mensajes', (req: Request, resp: Response) => {
 
     resp.status(200).json({
