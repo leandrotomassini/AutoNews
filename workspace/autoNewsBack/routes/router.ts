@@ -11,7 +11,7 @@ const router = Router();
 router.get('/tn', async (req: Request, resp: Response) => {
     try {
         const browser = await puppeteer.launch({
-            headless: false,
+            headless: 'new',
             executablePath: 'C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe',
         });
 
@@ -73,7 +73,7 @@ router.get('/tn', async (req: Request, resp: Response) => {
 
                 try {
                     const browser2 = await puppeteer.launch({
-                        headless: false,
+                        headless: 'new',
                         executablePath: 'C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe',
                     });
                     const page2 = await browser2.newPage();
