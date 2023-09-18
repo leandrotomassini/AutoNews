@@ -86,11 +86,14 @@ router.get('/tn', async (req: Request, resp: Response) => {
                     const datosNoticia = await page2.evaluate(() => {
                         const h1 = document.querySelector('h1')!.innerHTML;
                         const h2 = document.querySelector('h2')!.innerHTML;
-                        const portada = document.querySelector('.content-image')?.getAttribute('src');
+
+                        const imgElement = document.querySelector('img.width_full.height_full.article__lead-art-photo.image_placeholder');
+                        const imgSrc = imgElement ? imgElement.getAttribute('src') : null;
+
                         const fotos = Array.from(document.querySelectorAll('img.content-image')).map((imagen) => imagen.getAttribute('src'));
                         const parrafos = Array.from(document.querySelectorAll('.paragraph')).map((parrafo) => parrafo.textContent);
 
-                        return { h1, h2, portada, fotos, parrafos };
+                        return { h1, h2, portada: imgSrc, fotos, parrafos };
                     });
 
                     console.log('Cargando: ' + i + '-' + datosNoticia.h1);
