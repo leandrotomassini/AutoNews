@@ -16,6 +16,7 @@ voiceSelect.addEventListener("change", () => {
 });
 
 document.querySelector("button").addEventListener("click", () => {
+  console.log('BOTON TOCADO')
   noticias = [];
   currentNoticiaIndex = 0;
 
