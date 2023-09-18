@@ -4,54 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text to speech</title>
+    <title>Noticias Argentina</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
+    <select></select>
+    <button>Reproducir</button>
 
-    <div class="hero">
-
-        <div class="vivo">
-            VIVO
-        </div>
-
-        <div class="banner">
-            Alquileres con precios sin control en el AMBA: sólo en un mes, hubo aumentos de hasta veintiséis por ciento
-        </div>
-
-        <div id="slideshow">
-            <img src="https://www.infobae.com/new-resizer/NqmXoV2lWKaMkSCOx6BrwAtx4pA=/768x512/filters:format(webp):quality(85)/cloudfront-us-east-1.images.arcpublishing.com/infobae/4Y4AOJOD7CFJO3LQXC5MWKUO4Q.jpg"
-                alt="Image 1" class="active">
-        </div>
-
-
-        <div class="row">
-            <button>Listen</button>
-        </div>
-
-    </div>
-
-    <script>
-        let slideshow = document.querySelector("#slideshow");
-        let image = slideshow.querySelector("img.active");
-        let images = [
-            'https://www.infobae.com/new-resizer/NqmXoV2lWKaMkSCOx6BrwAtx4pA=/768x512/filters:format(webp):quality(85)/cloudfront-us-east-1.images.arcpublishing.com/infobae/4Y4AOJOD7CFJO3LQXC5MWKUO4Q.jpg',
-            'https://www.infobae.com/new-resizer/yB526C5GRZ7bMqTXoes-h0tQWQE=/768x432/filters:format(webp):quality(85)/cloudfront-us-east-1.images.arcpublishing.com/infobae/JG2YLYVOZRHXBFDSFNSNLQWNGM.jpg',
-            'https://www.infobae.com/new-resizer/isDZzdkMxrHfJj9XzTA90dYhvXg=/768x512/filters:format(webp):quality(85)/cloudfront-us-east-1.images.arcpublishing.com/infobae/NUR7QNXEIVAN7FNT6AKGKBLYRQ.jpg'
-        ];
-        let currentImage = 0;
-
-        function nextImage() {
-            image.classList.remove("active");
-            currentImage = (currentImage + 1) % images.length;
-            image.src = images[currentImage];
-            image.classList.add("active");
-        }
-
-        setInterval(nextImage, 5000);
-
-    </script>
     <script src="js/script.js"></script>
 </body>
 
