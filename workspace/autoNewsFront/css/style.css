@@ -40,10 +40,20 @@ video {
     max-height: 100%;
 }
 
+#selectBox {
+    display: none;
+}
+
+button{
+    width: 20px;
+    height: 5px;
+}
+
 @keyframes zoom {
     0% {
         transform: scale(1);
     }
+
     100% {
         transform: scale(1.1);
     }
