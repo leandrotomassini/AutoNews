@@ -1,53 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Noticias Argentina</title>
+    <title>Slider de Imágenes</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
-
-    <video id="backgroundVideo" autoplay muted loop>
-        <source src="assets/videos/1.mp4" type="video/mp4">
-        <source src="assets/videos/2.mp4" type="video/mp4">
-        <source src="assets/videos/3.mp4" type="video/mp4">
-    </video>
-
-
-
-    <div class="img">
-
+    <div class="video-container">
+        <video id="backgroundVideo" autoplay muted loop>
+            <source src="assets/videos/1.mp4" type="video/mp4">
+            <source src="assets/videos/2.mp4" type="video/mp4">
+            <source src="assets/videos/3.mp4" type="video/mp4">
+        </video>
     </div>
 
-    <div class="img">
-
+    <div class="image-slider">
+        <div class="image-slider-inner">
+            <img src="https://tn.com.ar/resizer/EJJA1M3QrG_7DWe9Wgs1id4a51Q=/1440x0/smart/filters:format(webp)/cloudfront-us-east-1.images.arcpublishing.com/artear/J3KFSMXDMNCN3P6UABS6RJ66KY.jpg" alt="">
+        </div>
     </div>
 
-    <div class="img">
-
-    </div>
-
-    <div class="img">
-
-
-    </div>
-
-    <div class="img">
-
-    </div>
-
-
-
-
-
-    <select id="selectBox"></select>
-    <button>Reproducir</button>
-
+    <script src="./js/slide.js"></script>
     <script src="./js/background.js"></script>
     <script src="./js/script.js"></script>
 </body>
-
 </html>
