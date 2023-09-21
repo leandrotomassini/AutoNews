@@ -5,9 +5,7 @@
   overflow: hidden;
 }
 
-#background-video1,
-#background-video2,
-#background-video3 {
+#background-video {
   position: absolute;
   top: 0;
   left: 0;
