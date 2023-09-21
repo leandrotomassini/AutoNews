@@ -27,7 +27,8 @@ const scrapeTnLinks = async () => {
   const page = await browser.newPage();
   const newsLinks: { newsLink: string }[] = [];
 
-  for (let i = 1; i <= 6; i++) {
+  // Aca es la cantida de paginas cambialo
+  for (let i = 1; i <= 2; i++) {
     await page.goto(`https://tn.com.ar/ultimas-noticias/pagina/${i}/`);
 
     const pageLinks = await page.evaluate(() => {

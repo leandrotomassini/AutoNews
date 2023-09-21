@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
+import { NewsService } from '../../services/news.service';
+import { NewsListResponse } from 'src/app/interface';
+
 @Component({
   selector: 'app-main-screen',
   templateUrl: './main-screen.component.html',
@@ -8,8 +11,17 @@ import { Component, OnInit } from '@angular/core';
 export class MainScreenComponent implements OnInit {
   speech = new SpeechSynthesisUtterance();
   voices: SpeechSynthesisVoice[] = [];
+  newsList: NewsListResponse[] = [];
+
+  constructor(private newsService: NewsService) {}
 
   ngOnInit() {
+    this.newsService.getNews().subscribe((news) => {
+      this.newsList = news;
+      console.log(this.newsList);
+    });
+
+    this.initializeSpeechSynthesis();
   }
 
   speak() {
