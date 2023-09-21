@@ -5,6 +5,7 @@ import { BackgroundVideoComponent } from './background-video/background-video.co
 import { GraphComponent } from './graph/graph.component';
 import { LiveLogoComponent } from './live-logo/live-logo.component';
 import { TimeComponent } from './time/time.component';
+import { NewSliderComponent } from './new-slider/new-slider.component';
 
 
 
@@ -14,12 +15,14 @@ import { TimeComponent } from './time/time.component';
     GraphComponent,
     LiveLogoComponent,
     TimeComponent,
+    NewSliderComponent,
   ],
   exports: [
     BackgroundVideoComponent,
     GraphComponent,
     LiveLogoComponent,
     TimeComponent,
+    NewSliderComponent,
   ],
   imports: [
     CommonModule
