@@ -9,9 +9,10 @@
   width: 100%;
   color: white;
   position: fixed;
-  margin-top: 600px;
-  height: 100%;
+  bottom: 0;
+  height: auto; 
 }
+
 
 .banner {
   width: 100%;

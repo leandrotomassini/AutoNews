@@ -44,7 +44,7 @@ export class BackgroundVideoComponent implements OnInit {
     };
 
     // Cambiar aleatoriamente cada tres segundos (3000 milisegundos)
-    setInterval(changeRandomVideo, 20000);
+    setInterval(changeRandomVideo, 10000);
 
     // Iniciar la reproducción del primer video al cargar la página
     videoElement.src = this.videoSources[this.currentVideoIndex];
