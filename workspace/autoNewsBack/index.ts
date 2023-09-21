@@ -2,7 +2,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 
 import Server from "./classes/server";
-import router from "./routes/router";
+import router from "./routes/news.router";
 
 const server = Server.instance;
 
