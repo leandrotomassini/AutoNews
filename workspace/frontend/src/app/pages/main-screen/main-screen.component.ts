@@ -14,6 +14,7 @@ export class MainScreenComponent implements OnInit {
   currentIndex = 0;
   isSpeaking = false;
   title: string = '';
+  images: string[] = [];
 
   constructor(private newsService: NewsService) {}
 
@@ -42,6 +43,7 @@ export class MainScreenComponent implements OnInit {
       const newData = this.newsList[this.currentIndex];
       console.log('Empezando a leer:', newData.h1);
       this.title = newData.h1;
+      this.images = newData.images;
       this.speech.text = newData.h1;
       this.isSpeaking = true;
       this.speakText();
