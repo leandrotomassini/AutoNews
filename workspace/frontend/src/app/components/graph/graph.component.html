@@ -6,31 +6,12 @@
   </div>
   <div class="marquee">
     <ul>
-      <li>
+      <li *ngFor="let title of titles">
         <div class="text-container">
           <div class="box"></div>
-          <h3>LA LECHUGA ES CARA PORQUE ES VERDE</h3>
+          <h3>{{title}}</h3>
         </div>
       </li>
-      <li>
-        <div class="text-container">
-          <div class="box"></div>
-          <h3>PAULO LONDRA SACA NUEVO DISCO "EL LEON"</h3>
-        </div>
-      </li>
-      <li>
-        <div class="text-container">
-          <div class="box"></div>
-          <h3>COTI GANA EL BAILANDO</h3>
-        </div>
-      </li>
-      <li>
-        <div class="text-container">
-          <div class="box"></div>
-          <h3>EL CONEJO DE GH SE CASA CON LA PRINCESITA</h3>
-        </div>
-      </li>
-
     </ul>
   </div>
 </div>

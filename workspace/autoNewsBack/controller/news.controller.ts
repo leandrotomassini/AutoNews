@@ -28,7 +28,7 @@ const scrapeTnLinks = async () => {
   const newsLinks: { newsLink: string }[] = [];
 
   // Aca es la cantida de paginas cambialo
-  for (let i = 1; i <= 2; i++) {
+  for (let i = 1; i <= 4; i++) {
     await page.goto(`https://tn.com.ar/ultimas-noticias/pagina/${i}/`);
 
     const pageLinks = await page.evaluate(() => {
@@ -111,7 +111,7 @@ const scrapeNewsData = async (newsLinks: any) => {
         return imageUrls.filter((imageUrl) => imageUrl !== null);
       });
 
-      if (images.length >= 3) {
+      if (images.length >= 2) {
         const newsItem = {
           h1,
           h2,

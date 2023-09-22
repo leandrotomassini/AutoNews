@@ -11,10 +11,11 @@ export class MainScreenComponent implements OnInit {
   speech = new SpeechSynthesisUtterance();
   voices: SpeechSynthesisVoice[] = [];
   newsList: NewsDatum[] = [];
+  images: string[] = [];
   currentIndex = 0;
   isSpeaking = false;
   title: string = '';
-  images: string[] = [];
+  titles: string[] = [];
 
   constructor(private newsService: NewsService) {}
 
@@ -25,6 +26,7 @@ export class MainScreenComponent implements OnInit {
   private getNews() {
     this.newsService.getNews().subscribe((news) => {
       this.newsList = news.newsData;
+      this.titles = this.newsList.map((newData) => newData.h1);
       this.initializeSpeechSynthesis();
     });
   }
@@ -44,7 +46,7 @@ export class MainScreenComponent implements OnInit {
       console.log('Empezando a leer:', newData.h1);
       this.title = newData.h1;
       this.images = newData.images;
-      this.speech.text = newData.h1;
+      this.speech.text = newData.combinedText;
       this.isSpeaking = true;
       this.speakText();
 

@@ -1,7 +1,7 @@
 <div class="background-video-container">
   <app-background-video></app-background-video>
   <div class="container">
-    <app-graph [title]="title" *ngIf="title!=''"></app-graph>
+    <app-graph [title]="title" [titles]="titles" *ngIf="title!=''"></app-graph>
     <app-live-logo></app-live-logo>
     <app-new-slider [images]="images" *ngIf="title!=''"></app-new-slider>
     <app-time></app-time>

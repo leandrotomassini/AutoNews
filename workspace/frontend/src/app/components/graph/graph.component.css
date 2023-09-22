@@ -57,7 +57,8 @@
   list-style: none;
   padding: 0;
   white-space: nowrap;
-  animation: marquee 30s linear infinite;
+  overflow: hidden;
+  animation: marquee 60s linear infinite;
 }
 
 .marquee li {
@@ -88,9 +89,9 @@
 
 @keyframes marquee {
   0% {
-    transform: translateX(100%);
+    margin-left: 100%;
   }
   100% {
-    transform: translateX(-100%);
+    margin-left: -100%;
   }
 }

@@ -6,13 +6,12 @@ import { Component, AfterViewInit, ElementRef, Input } from '@angular/core';
   styleUrls: ['./graph.component.css'],
 })
 export class GraphComponent implements AfterViewInit {
-
   @Input() title: string = '';
+  @Input() titles: string[] = [];
 
   constructor(private elRef: ElementRef) {}
 
   ngAfterViewInit() {
-
     setTimeout(() => {
       const marqueeList =
         this.elRef.nativeElement.querySelector('#marquee-list');
