@@ -1,6 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
 import { NewsService } from '../../services/news.service';
 import { NewsDatum } from 'src/app/interface';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-main-screen',
@@ -19,9 +20,14 @@ export class MainScreenComponent implements OnInit, OnDestroy {
   titles: string[] = [];
   private newsSubscription: any;
   private isReadingNews = false;
-  showLogoVideo: boolean = true; // Nueva propiedad para controlar el video del logo
+  showLogoVideo: boolean = true;
+  private newsCounter: number = 0;
 
-  constructor(private newsService: NewsService) {}
+  constructor(
+    private newsService: NewsService,
+    private router: Router,
+    private ngZone: NgZone
+  ) {}
 
   ngOnInit() {
     this.initializeSpeechSynthesis();
@@ -35,17 +41,11 @@ export class MainScreenComponent implements OnInit, OnDestroy {
   }
 
   private getNews() {
-    // Mostrar el video del logo mientras se obtienen las noticias
-    this.showLogoVideo = true;
-
     this.newsSubscription = this.newsService.getNews().subscribe((news) => {
       this.titles = news.newsData.map((newData) => newData.h1);
       this.newsList = news.newsData;
       this.currentIndex = 0;
       this.speakNext();
-
-      // Ocultar el video del logo después de recibir las noticias
-      this.showLogoVideo = false;
     });
   }
 
@@ -82,11 +82,24 @@ export class MainScreenComponent implements OnInit, OnDestroy {
         this.speech.onend = null;
 
         if (this.currentIndex >= this.newsList.length - 3) {
-          this.getNews();
           this.isNews = false;
+          this.showLogoVideo = true;
           console.log('Solicitando noticias nuevas !!!!!!!');
+
+          this.getNews();
         } else {
           this.speakNext();
+        }
+
+        this.newsCounter++;
+        console.log(this.newsCounter + ' CONTADOR');
+
+        if (this.newsCounter >= 2) {
+          console.log('RECARGANDOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO');
+          // Redirige a la página actual para simular una recarga completa
+          this.ngZone.run(() => {
+            this.router.navigate(['/', { skipLocationChange: true }]);
+          });
         }
       };
 
