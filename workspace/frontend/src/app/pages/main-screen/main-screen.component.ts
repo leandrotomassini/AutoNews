@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NewsService } from '../../services/news.service';
-import { NewsDatum, NewsListResponse } from 'src/app/interface';
+import { NewsDatum } from 'src/app/interface';
 
 @Component({
   selector: 'app-main-screen',
   templateUrl: './main-screen.component.html',
   styleUrls: ['./main-screen.component.css'],
 })
-export class MainScreenComponent implements OnInit {
+export class MainScreenComponent implements OnInit, OnDestroy {
   speech = new SpeechSynthesisUtterance();
   voices: SpeechSynthesisVoice[] = [];
   newsList: NewsDatum[] = [];
@@ -16,6 +16,7 @@ export class MainScreenComponent implements OnInit {
   isSpeaking = false;
   title: string = '';
   titles: string[] = [];
+  private newsSubscription: any;
 
   constructor(private newsService: NewsService) {}
 
@@ -23,12 +24,32 @@ export class MainScreenComponent implements OnInit {
     this.getNews();
   }
 
+  ngOnDestroy() {
+    // Asegúrate de cancelar la suscripción cuando el componente se destruye
+    if (this.newsSubscription) {
+      this.newsSubscription.unsubscribe();
+    }
+  }
+
   private getNews() {
-    this.newsService.getNews().subscribe((news) => {
-      this.newsList = news.newsData;
-      this.titles = this.newsList.map((newData) => newData.h1);
-      this.initializeSpeechSynthesis();
+    // Inicia la solicitud de noticias nuevas de manera asincrónica
+    const newNewsSubscription = this.newsService.getNews().subscribe((news) => {
+      // Una vez que lleguen las noticias nuevas, agrega las nuevas noticias
+      this.newsList.push(...news.newsData);
     });
+
+    // Si ya había una solicitud en curso, cancela la suscripción anterior
+    if (this.newsSubscription) {
+      this.newsSubscription.unsubscribe();
+    }
+
+    // Establece la nueva suscripción como la actual
+    this.newsSubscription = newNewsSubscription;
+
+    // Inicializa la síntesis de voz si aún no se ha hecho
+    if (!this.isSpeaking) {
+      this.initializeSpeechSynthesis();
+    }
   }
 
   private initializeSpeechSynthesis() {
@@ -46,8 +67,17 @@ export class MainScreenComponent implements OnInit {
       console.log('Empezando a leer:', newData.h1);
       this.title = newData.h1;
       this.images = newData.images;
-      this.speech.text = newData.combinedText;
+      this.speech.text = newData.h1;
       this.isSpeaking = true;
+
+      // Generar un índice aleatorio entre 0 y 2
+      const randomIndex = Math.floor(Math.random() * 3);
+
+      // Seleccionar el valor del índice aleatorio
+      const voiceIndex = [263, 261, 264][randomIndex];
+      console.log('Estoy usando la voz número: ' + voiceIndex);
+
+      this.speech.voice = this.voices[voiceIndex];
       this.speakText();
 
       this.speech.onend = () => {
@@ -55,14 +85,21 @@ export class MainScreenComponent implements OnInit {
         this.currentIndex++;
         this.isSpeaking = false;
         this.speech.onend = null;
-        this.speakNext();
+
+        // Verificar si se están leyendo las últimas tres noticias
+        if (this.currentIndex >= this.newsList.length - 3) {
+          // Solicitar nuevas noticias mientras se siguen leyendo las actuales
+          this.getNews();
+          console.log('PIDIENDO NOTICIAS NUEVAS!!!!!')
+        } else {
+          // Continuar leyendo las noticias actuales
+          this.speakNext();
+        }
       };
-    } else if (this.currentIndex >= this.newsList.length) {
     }
   }
 
   private speakText() {
-    this.speech.voice = this.voices[263];
     window.speechSynthesis.speak(this.speech);
   }
 }

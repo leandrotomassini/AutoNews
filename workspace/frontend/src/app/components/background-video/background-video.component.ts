@@ -11,7 +11,6 @@ export class BackgroundVideoComponent implements OnInit {
     '../../assets/videos/2.mp4',
     '../../assets/videos/4.mp4',
     '../../assets/videos/5.mp4',
-    '../../assets/videos/6.mp4',
     '../../assets/videos/7.mp4',
     '../../assets/videos/8.mp4',
   ];
