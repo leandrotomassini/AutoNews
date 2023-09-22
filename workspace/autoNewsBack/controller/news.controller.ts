@@ -27,7 +27,7 @@ const scrapeTnLinks = async () => {
   const page = await browser.newPage();
   const newsLinks: { newsLink: string }[] = [];
 
-  // Aca es la cantida de paginas cambialo
+  // Aca es la cantidad de páginas, puedes cambiarlo según tus necesidades
   for (let i = 1; i <= 4; i++) {
     await page.goto(`https://tn.com.ar/ultimas-noticias/pagina/${i}/`);
 
@@ -138,14 +138,17 @@ export const getTnNews = async (req: Request, res: Response) => {
     // Agregar una propiedad "total" que indique la cantidad de noticias
     res.json({
       ok: true,
-      total: newsData.length, // Agregar esta línea
+      total: newsData.length,
       newsData,
     });
   } catch (error) {
-    console.log(error);
-    res.json({
+    // Manejar el error de manera adecuada
+    console.error("Error al obtener noticias de TN:", error);
+
+    // Continuar con una respuesta de error al cliente si es necesario
+    res.status(500).json({
       ok: false,
-      msg: "Error: Obtener noticias de TN",
+      msg: "Error al obtener noticias de TN",
     });
   }
 };

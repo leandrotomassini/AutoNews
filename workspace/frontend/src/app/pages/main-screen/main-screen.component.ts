@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+
 import { NewsService } from '../../services/news.service';
 import { NewsDatum } from 'src/app/interface';
 
@@ -8,6 +9,7 @@ import { NewsDatum } from 'src/app/interface';
   styleUrls: ['./main-screen.component.css'],
 })
 export class MainScreenComponent implements OnInit, OnDestroy {
+  isNews: boolean = false;
   speech = new SpeechSynthesisUtterance();
   voices: SpeechSynthesisVoice[] = [];
   newsList: NewsDatum[] = [];
@@ -22,7 +24,7 @@ export class MainScreenComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.initializeSpeechSynthesis();
-    this.getNews(); // Solicita las noticias al inicio
+    this.getNews();
   }
 
   ngOnDestroy() {
@@ -35,8 +37,8 @@ export class MainScreenComponent implements OnInit, OnDestroy {
     this.newsSubscription = this.newsService.getNews().subscribe((news) => {
       this.titles = news.newsData.map((newData) => newData.h1);
       this.newsList = news.newsData;
-      this.currentIndex = 0; // Restablece el índice al inicio
-      this.speakNext(); // Comienza a leer las noticias
+      this.currentIndex = 0;
+      this.speakNext();
     });
   }
 
@@ -52,6 +54,7 @@ export class MainScreenComponent implements OnInit, OnDestroy {
     if (!this.isSpeaking && this.currentIndex < this.newsList.length) {
       const newData = this.newsList[this.currentIndex];
       console.log('Empezando a leer:', newData.h1);
+      this.isNews = true;
       this.title = newData.h1;
       this.images = newData.images;
       this.speech.text = newData.h1;
@@ -73,6 +76,7 @@ export class MainScreenComponent implements OnInit, OnDestroy {
 
         if (this.currentIndex >= this.newsList.length - 3) {
           this.getNews();
+          this.isNews = false;
           console.log('Solicitando noticias nuevas !!!!!!!');
         } else {
           this.speakNext();

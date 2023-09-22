@@ -6,8 +6,7 @@ import { GraphComponent } from './graph/graph.component';
 import { LiveLogoComponent } from './live-logo/live-logo.component';
 import { TimeComponent } from './time/time.component';
 import { NewSliderComponent } from './new-slider/new-slider.component';
-
-
+import { LogoVideoComponent } from './logo-video/logo-video.component';
 
 @NgModule({
   declarations: [
@@ -16,6 +15,7 @@ import { NewSliderComponent } from './new-slider/new-slider.component';
     LiveLogoComponent,
     TimeComponent,
     NewSliderComponent,
+    LogoVideoComponent,
   ],
   exports: [
     BackgroundVideoComponent,
@@ -23,9 +23,8 @@ import { NewSliderComponent } from './new-slider/new-slider.component';
     LiveLogoComponent,
     TimeComponent,
     NewSliderComponent,
+    LogoVideoComponent,
   ],
-  imports: [
-    CommonModule
-  ]
+  imports: [CommonModule],
 })
-export class ComponentsModule { }
+export class ComponentsModule {}
