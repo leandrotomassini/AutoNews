@@ -21,35 +21,23 @@ export class MainScreenComponent implements OnInit, OnDestroy {
   constructor(private newsService: NewsService) {}
 
   ngOnInit() {
-    this.initializeSpeechSynthesis(); // Inicia la síntesis de voz al cargar el componente
-    this.getNews();
+    this.initializeSpeechSynthesis();
+    this.getNews(); // Solicita las noticias al inicio
   }
 
   ngOnDestroy() {
-    // Asegúrate de cancelar la suscripción cuando el componente se destruye
     if (this.newsSubscription) {
       this.newsSubscription.unsubscribe();
     }
   }
 
   private getNews() {
-    // Inicia la solicitud de noticias nuevas de manera asincrónica
-    const newNewsSubscription = this.newsService.getNews().subscribe((news) => {
-      // Limpiar los títulos antiguos y guardar los nuevos títulos
+    this.newsSubscription = this.newsService.getNews().subscribe((news) => {
       this.titles = news.newsData.map((newData) => newData.h1);
-      // Una vez que lleguen las noticias nuevas, reemplaza las noticias actuales
       this.newsList = news.newsData;
-      // Comienza a leer las noticias cuando llegan
-      this.speakNext();
+      this.currentIndex = 0; // Restablece el índice al inicio
+      this.speakNext(); // Comienza a leer las noticias
     });
-
-    // Si ya había una solicitud en curso, cancela la suscripción anterior
-    if (this.newsSubscription) {
-      this.newsSubscription.unsubscribe();
-    }
-
-    // Establece la nueva suscripción como la actual
-    this.newsSubscription = newNewsSubscription;
   }
 
   private initializeSpeechSynthesis() {
@@ -69,10 +57,8 @@ export class MainScreenComponent implements OnInit, OnDestroy {
       this.speech.text = newData.h1;
       this.isSpeaking = true;
 
-      // Generar un índice aleatorio entre 0 y 2
       const randomIndex = Math.floor(Math.random() * 3);
 
-      // Seleccionar el valor del índice aleatorio
       const voiceIndex = [263, 261, 264][randomIndex];
       console.log('Estoy usando la voz número: ' + voiceIndex);
 
@@ -85,12 +71,10 @@ export class MainScreenComponent implements OnInit, OnDestroy {
         this.isSpeaking = false;
         this.speech.onend = null;
 
-        // Verificar si se están leyendo las últimas tres noticias
         if (this.currentIndex >= this.newsList.length - 3) {
-          // Solicitar nuevas noticias mientras se siguen leyendo las actuales
           this.getNews();
+          console.log('Solicitando noticias nuevas !!!!!!!');
         } else {
-          // Continuar leyendo las noticias actuales
           this.speakNext();
         }
       };
