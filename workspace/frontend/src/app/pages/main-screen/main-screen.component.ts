@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-
 import { NewsService } from '../../services/news.service';
 import { NewsDatum } from 'src/app/interface';
 
@@ -19,6 +18,8 @@ export class MainScreenComponent implements OnInit, OnDestroy {
   title: string = '';
   titles: string[] = [];
   private newsSubscription: any;
+  private isReadingNews = false;
+  showLogoVideo: boolean = true; // Nueva propiedad para controlar el video del logo
 
   constructor(private newsService: NewsService) {}
 
@@ -34,11 +35,17 @@ export class MainScreenComponent implements OnInit, OnDestroy {
   }
 
   private getNews() {
+    // Mostrar el video del logo mientras se obtienen las noticias
+    this.showLogoVideo = true;
+
     this.newsSubscription = this.newsService.getNews().subscribe((news) => {
       this.titles = news.newsData.map((newData) => newData.h1);
       this.newsList = news.newsData;
       this.currentIndex = 0;
       this.speakNext();
+
+      // Ocultar el video del logo después de recibir las noticias
+      this.showLogoVideo = false;
     });
   }
 
@@ -82,7 +89,14 @@ export class MainScreenComponent implements OnInit, OnDestroy {
           this.speakNext();
         }
       };
+
+      this.isReadingNews = true;
+      this.setIsReadingNews(true);
     }
+  }
+
+  private setIsReadingNews(value: boolean) {
+    this.isReadingNews = value;
   }
 
   private speakText() {
