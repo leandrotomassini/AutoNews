@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-
 import { NewsService } from '../../services/news.service';
-import { NewsListResponse } from 'src/app/interface';
+import { NewsDatum, NewsListResponse } from 'src/app/interface';
 
 @Component({
   selector: 'app-main-screen',
@@ -11,34 +10,55 @@ import { NewsListResponse } from 'src/app/interface';
 export class MainScreenComponent implements OnInit {
   speech = new SpeechSynthesisUtterance();
   voices: SpeechSynthesisVoice[] = [];
-  newsList: NewsListResponse[] = [];
+  newsList: NewsDatum[] = [];
+  currentIndex = 0;
+  isSpeaking = false;
+  title: string = '';
 
   constructor(private newsService: NewsService) {}
 
   ngOnInit() {
-    this.newsService.getNews().subscribe((news) => {
-      this.newsList = news;
-      console.log(this.newsList);
-    });
-
-    this.initializeSpeechSynthesis();
+    this.getNews();
   }
 
-  speak() {
-    this.speakText('Desde 1996, A Dos Voces es el programa político.');
+  private getNews() {
+    this.newsService.getNews().subscribe((news) => {
+      this.newsList = news.newsData;
+      this.initializeSpeechSynthesis();
+    });
   }
 
   private initializeSpeechSynthesis() {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.onvoiceschanged = () => {
         this.voices = window.speechSynthesis.getVoices();
+        this.speakNext();
       };
     }
   }
 
-  private speakText(text: string) {
-    this.speech.voice = this.voices[262];
-    this.speech.text = text;
+  speakNext() {
+    if (!this.isSpeaking && this.currentIndex < this.newsList.length) {
+      const newData = this.newsList[this.currentIndex];
+      console.log('Empezando a leer:', newData.h1);
+      this.title = newData.h1;
+      this.speech.text = newData.h1;
+      this.isSpeaking = true;
+      this.speakText();
+
+      this.speech.onend = () => {
+        console.log('Terminó de leer:', newData.h1);
+        this.currentIndex++;
+        this.isSpeaking = false;
+        this.speech.onend = null;
+        this.speakNext();
+      };
+    } else if (this.currentIndex >= this.newsList.length) {
+    }
+  }
+
+  private speakText() {
+    this.speech.voice = this.voices[263];
     window.speechSynthesis.speak(this.speech);
   }
 }

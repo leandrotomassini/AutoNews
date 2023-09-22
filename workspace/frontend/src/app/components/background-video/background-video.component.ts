@@ -6,7 +6,6 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./background-video.component.css'],
 })
 export class BackgroundVideoComponent implements OnInit {
-
   videoSources = [
     '../../assets/videos/1.mp4',
     '../../assets/videos/2.mp4',
@@ -29,18 +28,23 @@ export class BackgroundVideoComponent implements OnInit {
     ) as HTMLVideoElement;
 
     const changeRandomVideo = () => {
-      // Escoge un nuevo índice de video aleatorio
-      const randomVideoIndex = Math.floor(
-        Math.random() * this.videoSources.length
-      );
+      try {
+        // Escoge un nuevo índice de video aleatorio
+        const randomVideoIndex = Math.floor(
+          Math.random() * this.videoSources.length
+        );
 
-      // Cambia el video actual
-      this.currentVideoIndex = randomVideoIndex;
+        // Cambia el video actual
+        this.currentVideoIndex = randomVideoIndex;
 
-      // Carga y reproduce el nuevo video seleccionado
-      videoElement.src = this.videoSources[randomVideoIndex];
-      videoElement.load();
-      videoElement.play();
+        // Carga y reproduce el nuevo video seleccionado
+        videoElement.src = this.videoSources[randomVideoIndex];
+        videoElement.load();
+        videoElement.play();
+      } catch (error) {
+        // Captura cualquier excepción que pueda ocurrir al intentar iniciar la reproducción
+        console.error('Error al iniciar la reproducción del video:', error);
+      }
     };
 
     // Cambiar aleatoriamente cada tres segundos (3000 milisegundos)
@@ -49,7 +53,10 @@ export class BackgroundVideoComponent implements OnInit {
     // Iniciar la reproducción del primer video al cargar la página
     videoElement.src = this.videoSources[this.currentVideoIndex];
     videoElement.load();
-    videoElement.play();
+    videoElement.play().catch((error) => {
+      // Captura cualquier excepción que pueda ocurrir al intentar iniciar la reproducción
+      console.error('Error al iniciar la reproducción del video:', error);
+    });
   }
 
   get currentVideoSource(): string {

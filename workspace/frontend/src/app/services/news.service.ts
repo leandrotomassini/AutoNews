@@ -10,7 +10,7 @@ import { NewsListResponse } from '../interface';
 export class NewsService {
   constructor(private http: HttpClient) {}
 
-  getNews(): Observable<NewsListResponse[]> {
-    return this.http.get<NewsListResponse[]>('http://localhost:5000/tn');
+  getNews(): Observable<NewsListResponse> {
+    return this.http.get<NewsListResponse>('http://localhost:5000/tn');
   }
 }

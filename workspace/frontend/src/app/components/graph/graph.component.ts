@@ -1,18 +1,23 @@
-import { Component, AfterViewInit, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, ElementRef, Input } from '@angular/core';
 
 @Component({
   selector: 'app-graph',
   templateUrl: './graph.component.html',
-  styleUrls: ['./graph.component.css']
+  styleUrls: ['./graph.component.css'],
 })
 export class GraphComponent implements AfterViewInit {
-  constructor(private elRef: ElementRef) { }
+  @Input() title: string = '';
+
+  constructor(private elRef: ElementRef) {}
 
   ngAfterViewInit() {
     setTimeout(() => {
-      const marqueeList = this.elRef.nativeElement.querySelector('#marquee-list');
+      const marqueeList =
+        this.elRef.nativeElement.querySelector('#marquee-list');
       try {
-        const marqueeItems = Array.from(marqueeList.getElementsByTagName('li')) as HTMLElement[];
+        const marqueeItems = Array.from(
+          marqueeList.getElementsByTagName('li')
+        ) as HTMLElement[];
 
         function resetMarquee() {
           const firstItem = marqueeItems[0];
@@ -25,9 +30,7 @@ export class GraphComponent implements AfterViewInit {
         for (let i = 0; i < marqueeItems.length; i++) {
           marqueeList.appendChild(marqueeItems[i].cloneNode(true));
         }
-      } catch (error) {
-
-      }
+      } catch (error) {}
     });
   }
 }

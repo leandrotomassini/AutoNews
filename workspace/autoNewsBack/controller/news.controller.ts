@@ -14,7 +14,7 @@ interface NewsItem {
 // Función para iniciar una instancia de Puppeteer
 const launchPuppeteer = async () => {
   return await puppeteer.launch({
-    headless: "new",
+    headless: false,
     executablePath:
       "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe",
     timeout: 60000,
