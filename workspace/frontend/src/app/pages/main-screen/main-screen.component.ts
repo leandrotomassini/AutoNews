@@ -64,7 +64,7 @@ export class MainScreenComponent implements OnInit, OnDestroy {
       this.isNews = true;
       this.title = newData.h1;
       this.images = newData.images;
-      this.speech.text = newData.h1;
+      this.speech.text = newData.combinedText;
       this.isSpeaking = true;
 
       const randomIndex = Math.floor(Math.random() * 3);
