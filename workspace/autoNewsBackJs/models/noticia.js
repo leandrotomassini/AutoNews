@@ -32,6 +32,10 @@ const Noticiachema = Schema({
     default: [],
     required: true,
   },
+  fechaCreacion: {
+    type: Date, 
+    default: Date.now,
+  },
 });
 
 Noticiachema.methods.toJSON = function () {

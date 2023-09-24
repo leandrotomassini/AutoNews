@@ -1,6 +1,9 @@
 const { Router } = require("express");
 
-const { buscarNuevasNoticias } = require("../controllers/noticias");
+const {
+  buscarNuevasNoticias,
+  obtenerUltimas20Noticias,
+} = require("../controllers/noticias");
 
 const router = Router();
 
@@ -10,5 +13,6 @@ const router = Router();
 
 //  Buscar nuevas noticias
 router.get("/nuevas", buscarNuevasNoticias);
+router.get("/ultimas-noticias", obtenerUltimas20Noticias);
 
 module.exports = router;
