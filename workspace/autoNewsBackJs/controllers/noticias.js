@@ -146,7 +146,9 @@ const scrapeNewsData = async (newsLinks) => {
       )
     ) {
       const cover = await page.evaluate(() => {
-        const coverElement = document.querySelector(".image.cover img");
+        const coverElement = document.querySelector(
+          ".article__lead-art-photo img"
+        );
         return coverElement ? coverElement.getAttribute("src") : null;
       });
 
