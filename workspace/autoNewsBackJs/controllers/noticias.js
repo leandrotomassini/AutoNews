@@ -23,6 +23,7 @@ const buscarNuevasNoticias = async (req, res = response) => {
           titulo: newsItem.h1 || "",
           subtitulo: newsItem.h2 || "",
           contenidoCrudo: newsItem.combinedText,
+          categoria: newsItem.categoria,
           contenidoTerminado: "",
           publicada: false,
           fotos,
@@ -119,6 +120,14 @@ const scrapeNewsData = async (newsLinks) => {
     await page.goto(link.newsLink);
     await page.waitForSelector("h1");
 
+    // Obtenemos el texto de la categoría
+    const categoria = await page.evaluate(() => {
+      const segundoEnlace = document.querySelector(
+        "div.breadcrumb a:nth-child(2)"
+      );
+      return segundoEnlace ? segundoEnlace.textContent : "";
+    });
+
     const h1 = await page.evaluate(() => {
       const h1Element = document.querySelector("h1");
       return h1Element ? h1Element.textContent : null;
@@ -172,6 +181,7 @@ const scrapeNewsData = async (newsLinks) => {
           combinedText,
           cover,
           images,
+          categoria,
         };
 
         newsData.push(newsItem);
@@ -182,6 +192,7 @@ const scrapeNewsData = async (newsLinks) => {
   await browser.close();
   return newsData;
 };
+
 module.exports = {
   buscarNuevasNoticias,
   obtenerUltimas20Noticias,

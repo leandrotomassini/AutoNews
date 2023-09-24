@@ -22,6 +22,10 @@ const Noticiachema = Schema({
     type: String,
     required: [false],
   },
+  categoria: {
+    type: String,
+    required: [false],
+  },
   publicada: {
     type: Boolean,
     default: true,
