@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noticias</title>
+    <style>
+        .cajatexto {
+            width: 400px;
+            height: 200px;
+        }
+    </style>
+</head>
+
+<body>
+    <br>
+    <br>
+    <button id="copiarNoticia">Copiar noticia</button>
+    <br>
+    <br>
+    <textarea class="cajatexto" id="contenidoNoticia" readonly></textarea>
+    <br>
+    <br>
+    <button id="pegarNoticia">Pegar noticia</button>
+    <button id="guardarNoticia">Guardar noticia</button>
+    <button id="siguienteNoticia">Siguiente noticia</button>
+
+    <script>
+        let noticias = [];
+        let currentIndex = 0;
+        const cajatexto = document.getElementById('contenidoNoticia');
+        let noticiaActual = null;
+
+        const limpiarTexto = (texto) => {
+            // Reemplazar saltos de línea y "\n" con puntos seguidos
+            texto = texto.replace(/\n/g, '. ');
+
+            // Eliminar "Conclusión:" si aparece en el texto
+            texto = texto.replace(/Conclusión:/g, '');
+
+            // Eliminar comillas dobles
+            texto = texto.replace(/"/g, '');
+
+            // Eliminar asteriscos
+            texto = texto.replace(/\*/g, '');
+
+            // Eliminar contenido entre paréntesis y los paréntesis
+            texto = texto.replace(/\([^)]+\)/g, '');
+
+            return texto;
+        };
+
+        const limpiarYGuardarNoticia = () => {
+            const contenidoCrudo = cajatexto.value;
+            const contenidoLimpio = limpiarTexto(contenidoCrudo);
+            cajatexto.value = contenidoLimpio;
+            guardarNoticia();
+        };
+
+        const copiarNoticia = () => {
+            const contenidoCrudo = noticias[currentIndex].contenidoCrudo;
+            const contenidoConSaludo = `Primero cambia todo lo que diga TN por Argentina Noticias, y para el siguiente texto necesito que me devuelvas directamente un texto de la noticia entretenido atrapante sin aclaraciones tuyas ni comentarios ni indicaciones ni nada extra. solo el texto puro. al final debes dar una conclusión tuya e invitar a dejar la opinión en el chat y a subscribirte. debe ser atrapante y entretenido. no mientas ni exageres. recuerda es muy importante que el texto sea puro que no indiques nada como título: o conclusión: o nada extra por favor solo texto puro listo para copiar y pegar. trata de no olvidar ningún dato importante recuerda que hay que informar. no escribas por nada Conclusion: o algo parecido di por ejemplo 'en conclusión, ...'. directamente escribe párrafos de texto nada mas. y si soy Argentina Noticias no digas suscríbete para más noticias, sé más creativo inventa algún lema pero copado y profesional. NO PONGAS CONCLUSIÓN DOS PUNTOS. (conclusión:) ES SUMAMENTE IMPORTANTE SE METICULOSO EN LO QUE TE PIDO. NO UTILICES NEGRITAS NI NADA EXTRA SOLO TEXTO PLANO YO SE DARME CUENTA SOLO DE TODO. QUIERO TODO EN UNA TIRA DE TEXTO SEPARADO POR PUNTO SEGUNDO NADA DE SALTOS DE LÍNEA NI PUNTOS Y APARTE. RESPETA MI PROMP COMPLETO METICULOSAMENTE. NADA DE SALTOS DE LÍNEA NI PUNTOS Y APARTE todo punto seguido quiero!!!!!!.texto:` + contenidoCrudo;
+            cajatexto.value = contenidoConSaludo;
+            cajatexto.select();
+            document.execCommand('copy');
+            cajatexto.value = '';
+        };
+
+        const guardarNoticia = () => {
+            if (noticiaActual) {
+                noticiaActual.contenidoTerminado = cajatexto.value;
+                // Realizar la solicitud POST al servidor con el ID de la noticia actual
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', `http://localhost:3000/api/noticias/${noticiaActual._id}`, true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+
+                const requestBody = JSON.stringify({ contenidoTerminado: noticiaActual.contenidoTerminado });
+                console.log(requestBody)
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            // La solicitud fue exitosa, puedes hacer algo si es necesario
+                            console.log('Noticia guardada exitosamente');
+                        } else {
+                            // Handle any error here
+                            console.error('Error al guardar la noticia:', xhr.status);
+                        }
+                    }
+                };
+
+                xhr.send(requestBody);
+            }
+        };
+
+        const siguienteNoticia = () => {
+            currentIndex = (currentIndex + 1) % noticias.length;
+            noticiaActual = noticias[currentIndex];
+            cajatexto.value = noticiaActual.contenidoTerminado || '';
+        };
+
+        document.getElementById('pegarNoticia').addEventListener('click', function () {
+            navigator.clipboard.readText().then(function (clipboardText) {
+                document.getElementById('contenidoNoticia').value = clipboardText;
+            }).catch(function (err) {
+                console.error('Error al pegar el contenido del portapapeles: ', err);
+            });
+        });
+
+        document.getElementById('copiarNoticia').addEventListener('click', copiarNoticia);
+        document.getElementById('guardarNoticia').addEventListener('click', limpiarYGuardarNoticia);
+        document.getElementById('siguienteNoticia').addEventListener('click', siguienteNoticia);
+
+        // Realizar la solicitud AJAX para obtener las noticias
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', 'http://localhost:3000/api/noticias/ultimas-noticias', true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                const response = JSON.parse(xhr.responseText);
+                if (response.ok) {
+                    noticias = response.noticias;
+                }
+            }
+        };
+        xhr.send();
+    </script>
+</body>
+
+</html>

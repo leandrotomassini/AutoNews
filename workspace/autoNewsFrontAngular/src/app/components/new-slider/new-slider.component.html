@@ -1,0 +1,13 @@
+<div class="centered-container">
+  <div class="container-img">
+    <ng-container *ngFor="let image of images; let i = index">
+      <img
+        [src]="image"
+        alt=""
+        width="300px"
+        height="300px"
+        [class.visible]="currentIndex === i"
+      >
+    </ng-container>
+  </div>
+</div>
