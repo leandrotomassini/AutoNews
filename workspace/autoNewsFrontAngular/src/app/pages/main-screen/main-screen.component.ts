@@ -11,19 +11,16 @@ export class MainScreenComponent implements OnInit {
   speech = new SpeechSynthesisUtterance();
   voices: SpeechSynthesisVoice[] = [];
   latestPost: Noticia[] = [];
+  currentNewsIndex = 0;
+  title: string = '';
+  titles: string[] = [];
+  images: string[] = [];
 
   constructor(private newsService: NewsService) {}
 
   ngOnInit() {
-    this.newsService.getNews().subscribe((response: NewsListResponse) => {
-      if (response.ok) {
-        this.latestPost = response.noticias;
-        console.log(this.latestPost);
-      } else {
-        console.error('Error al obtener noticias.');
-      }
-    });
-
+    this.loadVoices();
+    this.getAndReadNews();
     if ('speechSynthesis' in window) {
       window.speechSynthesis.onvoiceschanged = () => {
         this.loadVoices();
@@ -33,24 +30,55 @@ export class MainScreenComponent implements OnInit {
 
   loadVoices() {
     this.voices = window.speechSynthesis.getVoices();
-    // this.speakRandomText();
   }
 
-  speakRandomText() {
-    this.speech.text = 'Hola mundo';
+  getAndReadNews() {
+    this.images = []; // Vaciar el arreglo 'images' antes de hacer la solicitud de noticias
 
-    const voiceIndexes = [263, 261, 264];
-    const randomIndex = Math.floor(Math.random() * voiceIndexes.length);
-    const voiceIndex = voiceIndexes[randomIndex];
-    const selectedVoice = this.voices.find(
-      (voice) => voice.voiceURI === this.voices[voiceIndex].voiceURI
-    );
+    this.newsService.getNews().subscribe((response: NewsListResponse) => {
+      if (response.ok) {
+        this.latestPost = response.noticias;
 
-    if (selectedVoice) {
-      this.speech.voice = selectedVoice;
-      window.speechSynthesis.speak(this.speech);
+        // Llenar el arreglo 'titles' con los títulos de las noticias
+        this.titles = this.latestPost.map((news) => news.titulo);
+
+        console.log(this.latestPost);
+        this.readNewsContent();
+      } else {
+        console.error('Error al obtener noticias.');
+      }
+    });
+  }
+
+  readNewsContent() {
+    if (this.currentNewsIndex < this.latestPost.length) {
+      const news = this.latestPost[this.currentNewsIndex];
+      this.speech.text = news.titulo;
+      this.title = news.titulo;
+
+      // Llenar el arreglo 'images' con las fotos de la noticia actual
+      this.images = [...news.fotos];
+
+      const voiceIndexes = [263, 261, 264];
+      const randomIndex = Math.floor(Math.random() * voiceIndexes.length);
+      const voiceIndex = voiceIndexes[randomIndex];
+      const selectedVoice = this.voices.find(
+        (voice) => voice.voiceURI === this.voices[voiceIndex].voiceURI
+      );
+
+      if (selectedVoice) {
+        this.speech.voice = selectedVoice;
+        this.speech.onend = () => {
+          this.currentNewsIndex++;
+          this.readNewsContent();
+        };
+        window.speechSynthesis.speak(this.speech);
+      } else {
+        console.error('No se encontró una voz válida.');
+      }
     } else {
-      console.error('No se encontró una voz válida.');
+      this.currentNewsIndex = 0;
+      this.getAndReadNews();
     }
   }
 }
