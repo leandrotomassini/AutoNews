@@ -1,118 +1,42 @@
-import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
-import { NewsService } from '../../services/news.service';
-import { NewsDatum } from 'src/app/interface';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-main-screen',
   templateUrl: './main-screen.component.html',
   styleUrls: ['./main-screen.component.css'],
 })
-export class MainScreenComponent implements OnInit, OnDestroy {
-  isNews: boolean = false;
+export class MainScreenComponent implements OnInit {
   speech = new SpeechSynthesisUtterance();
   voices: SpeechSynthesisVoice[] = [];
-  newsList: NewsDatum[] = [];
-  images: string[] = [];
-  currentIndex = 0;
-  isSpeaking = false;
-  title: string = '';
-  titles: string[] = [];
-  private newsSubscription: any;
-  private isReadingNews = false;
-  showLogoVideo: boolean = true;
-  private newsCounter: number = 0;
-
-  constructor(
-    private newsService: NewsService,
-    private router: Router,
-    private ngZone: NgZone
-  ) {}
 
   ngOnInit() {
-    this.initializeSpeechSynthesis();
-    this.getNews();
-  }
-
-  ngOnDestroy() {
-    if (this.newsSubscription) {
-      this.newsSubscription.unsubscribe();
-    }
-  }
-
-  private getNews() {
-    this.newsSubscription = this.newsService.getNews().subscribe((news) => {
-      this.titles = news.newsData.map((newData) => newData.h1);
-      this.newsList = news.newsData;
-      this.currentIndex = 0;
-      this.speakNext();
-    });
-  }
-
-  private initializeSpeechSynthesis() {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.onvoiceschanged = () => {
-        this.voices = window.speechSynthesis.getVoices();
+        this.loadVoices();
       };
     }
   }
 
-  speakNext() {
-    if (!this.isSpeaking && this.currentIndex < this.newsList.length) {
-      const newData = this.newsList[this.currentIndex];
-      console.log('Empezando a leer:', newData.h1);
-      this.isNews = true;
-      this.title = newData.h1;
-      this.images = newData.images;
-      this.speech.text = newData.combinedText;
-      this.isSpeaking = true;
+  loadVoices() {
+    this.voices = window.speechSynthesis.getVoices();
+    // this.speakRandomText();
+  }
 
-      const randomIndex = Math.floor(Math.random() * 3);
+  speakRandomText() {
+    this.speech.text = 'Hola mundo';
 
-      const voiceIndex = [263, 261, 264][randomIndex];
-      console.log('Estoy usando la voz número: ' + voiceIndex);
+    const voiceIndexes = [263, 261, 264];
+    const randomIndex = Math.floor(Math.random() * voiceIndexes.length);
+    const voiceIndex = voiceIndexes[randomIndex];
+    const selectedVoice = this.voices.find(
+      (voice) => voice.voiceURI === this.voices[voiceIndex].voiceURI
+    );
 
-      this.speech.voice = this.voices[voiceIndex];
-      this.speakText();
-
-      this.speech.onend = () => {
-        console.log('Terminó de leer:', newData.h1);
-        this.currentIndex++;
-        this.isSpeaking = false;
-        this.speech.onend = null;
-
-        if (this.currentIndex >= this.newsList.length - 3) {
-          this.isNews = false;
-          this.showLogoVideo = true;
-          console.log('Solicitando noticias nuevas !!!!!!!');
-
-          this.getNews();
-        } else {
-          this.speakNext();
-        }
-
-        this.newsCounter++;
-        console.log(this.newsCounter + ' CONTADOR');
-
-        if (this.newsCounter >= 2) {
-          console.log('RECARGANDOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO');
-          // Redirige a la página actual para simular una recarga completa
-          this.ngZone.run(() => {
-            this.router.navigate(['/', { skipLocationChange: true }]);
-          });
-        }
-      };
-
-      this.isReadingNews = true;
-      this.setIsReadingNews(true);
+    if (selectedVoice) {
+      this.speech.voice = selectedVoice;
+      window.speechSynthesis.speak(this.speech);
+    } else {
+      console.error('No se encontró una voz válida.');
     }
-  }
-
-  private setIsReadingNews(value: boolean) {
-    this.isReadingNews = value;
-  }
-
-  private speakText() {
-    window.speechSynthesis.speak(this.speech);
   }
 }
