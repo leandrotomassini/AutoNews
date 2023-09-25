@@ -113,7 +113,7 @@ const publicarNoticia = async (req, res = response) => {
 // Función para iniciar una instancia de Puppeteer
 const launchPuppeteer = async () => {
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: 'new',
     executablePath:
       "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe",
     timeout: 60000,
