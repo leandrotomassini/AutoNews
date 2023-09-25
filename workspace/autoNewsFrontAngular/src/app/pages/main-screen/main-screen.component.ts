@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { NewsListResponse, Noticia } from 'src/app/interface';
+import { NewsService } from 'src/app/services/news.service';
 
 @Component({
   selector: 'app-main-screen',
@@ -8,8 +10,20 @@ import { Component, OnInit } from '@angular/core';
 export class MainScreenComponent implements OnInit {
   speech = new SpeechSynthesisUtterance();
   voices: SpeechSynthesisVoice[] = [];
+  latestPost: Noticia[] = [];
+
+  constructor(private newsService: NewsService) {}
 
   ngOnInit() {
+    this.newsService.getNews().subscribe((response: NewsListResponse) => {
+      if (response.ok) {
+        this.latestPost = response.noticias;
+        console.log(this.latestPost);
+      } else {
+        console.error('Error al obtener noticias.');
+      }
+    });
+
     if ('speechSynthesis' in window) {
       window.speechSynthesis.onvoiceschanged = () => {
         this.loadVoices();

@@ -129,7 +129,7 @@ const scrapeTnLinks = async () => {
   const newsLinks = [];
 
   // Aca es la cantidad de páginas, puedes cambiarlo según tus necesidades
-  for (let i = 1; i <= 2; i++) {
+  for (let i = 1; i <= 5; i++) {
     await page.goto(`https://tn.com.ar/ultimas-noticias/pagina/${i}/`);
     const pageLinks = await page.evaluate(() => {
       const newsCards = document.querySelectorAll(".card__container");
