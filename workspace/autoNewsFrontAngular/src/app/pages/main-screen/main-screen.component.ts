@@ -37,7 +37,12 @@ export class MainScreenComponent implements OnInit {
 
     this.newsService.getNews().subscribe((response: NewsListResponse) => {
       if (response.ok) {
-        this.latestPost = response.noticias;
+        // Filtrar las noticias que contienen la frase no deseada en el contenido
+        this.latestPost = response.noticias.filter((news) => {
+          return !news.contenidoTerminado.includes(
+            'Primero cambia todo lo que diga TN por Argentina Noticias'
+          );
+        });
 
         // Llenar el arreglo 'titles' con los títulos de las noticias
         this.titles = this.latestPost.map((news) => news.titulo);

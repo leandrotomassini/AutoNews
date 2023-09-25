@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 
 import { NewsListResponse } from '../interface';
 
-
 @Injectable({
   providedIn: 'root',
 })
@@ -12,6 +11,14 @@ export class NewsService {
   constructor(private http: HttpClient) {}
 
   getNews(): Observable<NewsListResponse> {
-    return this.http.get<NewsListResponse>('http://localhost:3000/api/noticias/ultimas-publicaciones');
+    return this.http.get<NewsListResponse>(
+      'http://localhost:3000/api/noticias/ultimas-publicaciones'
+    );
+  }
+
+  searchNews(): Observable<any> {
+    return this.http.get<NewsListResponse>(
+      'http://localhost:3000/api/noticias/nuevas'
+    );
   }
 }
