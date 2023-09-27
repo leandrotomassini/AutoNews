@@ -12,13 +12,13 @@ export class NewsService {
 
   getNews(): Observable<NewsListResponse> {
     return this.http.get<NewsListResponse>(
-      'http://192.168.1.33:3000/api/noticias/ultimas-publicaciones'
+      'http://localhost:3000/api/noticias/ultimas-publicaciones'
     );
   }
 
   searchNews(): Observable<any> {
     return this.http.get<NewsListResponse>(
-      'http://192.168.1.33:3000/api/noticias/nuevas'
+      'http://localhost:3000/api/noticias/nuevas'
     );
   }
 }

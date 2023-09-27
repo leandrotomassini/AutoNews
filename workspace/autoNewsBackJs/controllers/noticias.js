@@ -50,7 +50,9 @@ const buscarNuevasNoticias = async (req, res = response) => {
 
 const obtenerUltimas20Noticias = async (req, res = response) => {
   try {
-    const noticias = await Noticia.find({ publicada: false }).sort({ fechaCreacion: -1 }).limit(20);
+    const noticias = await Noticia.find({ publicada: false })
+      .sort({ fechaCreacion: -1 })
+      .limit(20);
 
     res.json({
       ok: true,
@@ -71,9 +73,14 @@ const obtenerUltimas20Publicaciones = async (req, res = response) => {
       .sort({ fechaCreacion: -1 })
       .limit(20);
 
+    const cantidadPublicaciones = await Noticia.countDocuments({
+      publicada: true,
+    });
+
     res.json({
       ok: true,
       noticias,
+      cantidadPublicaciones,
     });
   } catch (error) {
     res.status(500).json({
@@ -84,23 +91,23 @@ const obtenerUltimas20Publicaciones = async (req, res = response) => {
   }
 };
 
-
-
 const publicarNoticia = async (req, res = response) => {
   try {
     const { id } = req.params;
     const { contenidoTerminado, ...body } = req.body;
 
-    const noticia = await Noticia.findByIdAndUpdate(id, { contenidoTerminado, publicada: true }, { new: true });
-
+    const noticia = await Noticia.findByIdAndUpdate(
+      id,
+      { contenidoTerminado, publicada: true },
+      { new: true }
+    );
 
     res.json({
       ok: true,
       id,
       contenidoTerminado,
-      msg: "Publicar"
+      msg: "Publicar",
     });
-
   } catch (error) {
     res.status(500).json({
       ok: false,
@@ -108,12 +115,12 @@ const publicarNoticia = async (req, res = response) => {
       error,
     });
   }
-}
+};
 
 // Función para iniciar una instancia de Puppeteer
 const launchPuppeteer = async () => {
   const browser = await puppeteer.launch({
-    headless: 'new',
+    headless: "new",
     executablePath:
       "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe",
     timeout: 60000,
@@ -166,8 +173,8 @@ const scrapeNewsData = async (newsLinks) => {
 
     // Obtenemos el texto de la categoría
     const categoria = await page.evaluate(() => {
-      const segundoEnlace = document.querySelector('.header__menu');
-      const linkElement = segundoEnlace.querySelector('a');
+      const segundoEnlace = document.querySelector(".header__menu");
+      const linkElement = segundoEnlace.querySelector("a");
       return linkElement.textContent;
     });
 
@@ -240,5 +247,5 @@ module.exports = {
   buscarNuevasNoticias,
   obtenerUltimas20Noticias,
   obtenerUltimas20Publicaciones,
-  publicarNoticia
+  publicarNoticia,
 };

@@ -58,7 +58,7 @@ export class MainScreenComponent implements OnInit {
   readNewsContent() {
     if (this.currentNewsIndex < this.latestPost.length) {
       const news = this.latestPost[this.currentNewsIndex];
-      this.speech.text = news.titulo;
+      this.speech.text = news.contenidoTerminado;
       this.title = news.titulo;
 
       // Llenar el arreglo 'images' con las fotos de la noticia actual
@@ -83,7 +83,8 @@ export class MainScreenComponent implements OnInit {
       }
     } else {
       this.currentNewsIndex = 0;
-      this.getAndReadNews();
+      window.location.reload();
+      // this.getAndReadNews();
     }
   }
 }
